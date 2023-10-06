@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -53,6 +55,14 @@ public class UserInstControllerTest {
         UserInst userr = createValidUser();
         testRestTemplate.postForEntity(API_1_0_USERS, userr, Object.class);
         assertThat(userRepository.count()).isEqualTo(1);
+    }
+    @Test
+    public void when_UserIsValid_passwordIsHashedInDatabase() {
+        UserInst userr = createValidUser();
+        testRestTemplate.postForEntity(API_1_0_USERS, userr, Object.class);
+        List<UserInst> users = userRepository.findAll();
+        UserInst userInDB = users.get(0);
+        assertThat(userInDB.getPassword()).isNotEqualTo(userr.getPassword());
     }
 
 }
